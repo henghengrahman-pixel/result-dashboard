@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <div class="login-head">
+      <div class="badge">Z</div>
+      <div>
+        <div class="login-title">Admin Z-Panel</div>
+        <div class="muted">Login pakai ID & Password</div>
+      </div>
+    </div>
+
+    <form id="loginForm" class="login-form">
+      <label>ID</label>
+      <input id="inUser" autocomplete="username" placeholder="Masukkan ID" />
+      <label>Password</label>
+      <input id="inPass" type="password" autocomplete="current-password" placeholder="Masukkan Password" />
+      <button class="btn full" type="submit">Login</button>
+      <div id="loginMsg" class="msg"></div>
+    </form>
+
+    <div class="muted small">Tanpa database. Data disimpan di browser (localStorage).</div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
