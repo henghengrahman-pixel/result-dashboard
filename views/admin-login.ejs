@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+  <div class="wrap narrow">
+    <h2>Admin Login</h2>
+    <% if (error) { %><div class="alert"><%= error %></div><% } %>
+    <form method="post" action="/admin/login" class="form">
+      <input name="username" placeholder="Username" required />
+      <input name="password" placeholder="Password" type="password" required />
+      <button class="btn full">Login</button>
+    </form>
+    <p class="muted">Pertama kali? buka <code>/admin/setup</code> untuk buat admin (sekali saja).</p>
+  </div>
+</body>
+</html>
