@@ -48,33 +48,12 @@ const defaultData = {
     {id:"brunei", name:"BRUNEI", logo:"https://via.placeholder.com/240x120.png?text=BRUNEI", number:"2148", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"06:30", resultTime:"07:00", desc:""},
     {id:"california", name:"CALIFORNIA", logo:"https://via.placeholder.com/240x120.png?text=CALIFORNIA", number:"2911", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"07:30", resultTime:"08:00", desc:""},
     {id:"cambodia", name:"CAMBODIA", logo:"https://via.placeholder.com/240x120.png?text=CAMBODIA", number:"0498", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"08:30", resultTime:"09:00", desc:""},
-    {id:"carolina-day", name:"CAROLINA-DAY", logo:"https://via.placeholder.com/240x120.png?text=CAROLINA-DAY", number:"2296", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"10:30", resultTime:"11:00", desc:""},
-    {id:"carolina-eve", name:"CAROLINA-EVE", logo:"https://via.placeholder.com/240x120.png?text=CAROLINA-EVE", number:"9470", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"12:30", resultTime:"13:00", desc:""},
-    {id:"china", name:"CHINA", logo:"https://via.placeholder.com/240x120.png?text=CHINA", number:"0140", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"14:30", resultTime:"15:00", desc:""},
-    {id:"dubai", name:"DUBAI", logo:"https://via.placeholder.com/240x120.png?text=DUBAI", number:"5705", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"16:30", resultTime:"17:00", desc:""},
-    {id:"florida", name:"FLORIDA", logo:"https://via.placeholder.com/240x120.png?text=FLORIDA", number:"3321", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"18:30", resultTime:"19:00", desc:""}
+    {id:"carolina-day", name:"CAROLINA-DAY", logo:"https://via.placeholder.com/240x120.png?text=CAROLINA-DAY", number:"2296", date:"Result: Jumat, 20-02-2026", liveUrl:"#", detailUrl:"#", historyUrl:"#", closeTime:"10:30", resultTime:"11:00", desc:""}
   ],
-  results: [
-    {marketId:"carolina-eve", number:"9470", at:"21 Feb 2026 | 01:00:04"},
-    {marketId:"carolina-day", number:"2296", at:"21 Feb 2026 | 01:00:04"}
-  ]
+  results: []
 };
 
 function deepClone(x){ return JSON.parse(JSON.stringify(x)); }
-
-function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return deepClone(defaultData);
-    const parsed = JSON.parse(raw);
-    return normalize(parsed);
-  }catch{
-    return deepClone(defaultData);
-  }
-}
-function saveData(data){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
 
 function normalize(d){
   const data = (d && typeof d === "object") ? d : deepClone(defaultData);
@@ -83,24 +62,43 @@ function normalize(d){
   data.site.navMenu = Array.isArray(data.site.navMenu) ? data.site.navMenu : [];
   data.site.hero = data.site.hero && typeof data.site.hero === "object" ? data.site.hero : deepClone(defaultData.site.hero);
   data.site.hero.rightBanners = Array.isArray(data.site.hero.rightBanners) ? data.site.hero.rightBanners : [];
-
   data.tabs = Array.isArray(data.tabs) ? data.tabs : deepClone(defaultData.tabs);
   data.markets = Array.isArray(data.markets) ? data.markets : [];
   data.results = Array.isArray(data.results) ? data.results : [];
   return data;
 }
 
-const state = {
-  data: loadData(),
-  currentTab: "result",
-};
-
-function pad4(s){
-  s = String(s ?? "");
-  return s.padStart(4, "0");
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return deepClone(defaultData);
+    return normalize(JSON.parse(raw));
+  }catch{
+    return deepClone(defaultData);
+  }
 }
 
+const state = { data: loadData(), currentTab:"result" };
+
 function el(id){ return document.getElementById(id); }
+function pad4(s){ return String(s ?? "").padStart(4,"0"); }
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function escapeAttr(s){ return escapeHtml(s).replaceAll("`","&#096;"); }
+
+function injectShade(){
+  if(document.querySelector(".sideShade")) return;
+  const div = document.createElement("div");
+  div.className = "sideShade";
+  document.body.appendChild(div);
+}
 
 function renderTopLinks(){
   const wrap = el("topLinks");
@@ -115,7 +113,7 @@ function renderNav(){
   const nav = el("navMenu");
   const items = state.data.site.navMenu || [];
   nav.innerHTML = items.map(it=>{
-    const pill = it.pill && it.pill.text ? `<span class="pill ${it.pill.type === "new" ? "new":"hot"}">${escapeHtml(it.pill.text)}</span>` : "";
+    const pill = it.pill?.text ? `<span class="pill ${it.pill.type==="new"?"new":"hot"}">${escapeHtml(it.pill.text)}</span>` : "";
     return `<a href="${it.url || "#"}" class="${it.active ? "active":""}">${escapeHtml(it.label || "")}${pill}</a>`;
   }).join("");
 }
@@ -135,14 +133,14 @@ function applySite(){
   wa.textContent = s.whatsappText || "WHATSAPP";
   wa.href = s.whatsappUrl || "#";
 
-  // hero images
-  const left = el("sideLeft");
-  const right = el("sideRight");
-  left.style.backgroundImage = `url("${s.hero?.sideLeftBg || ""}")`;
-  right.style.backgroundImage = `url("${s.hero?.sideRightBg || ""}")`;
+  // ✅ SET SIDE BG PAKAI CSS VAR (ini yang bikin mirip)
+  const root = document.documentElement;
+  root.style.setProperty("--side-left-url", `url("${s.hero?.sideLeftBg || ""}")`);
+  root.style.setProperty("--side-right-url", `url("${s.hero?.sideRightBg || ""}")`);
 
-  const mainBanner = el("mainBannerImg");
-  mainBanner.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)), url("${s.hero?.mainBannerBg || ""}")`;
+  // main banner
+  el("mainBannerImg").style.backgroundImage =
+    `linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)), url("${s.hero?.mainBannerBg || ""}")`;
 
   // buttons
   el("btnLogin").textContent = s.hero?.btnLogin?.label || "Login";
@@ -169,6 +167,17 @@ function applySite(){
   const track = el("marqueeTrack");
   const unit = `<span>${escapeHtml(txt)}</span>`;
   track.innerHTML = unit + unit + unit + unit;
+
+  // ✅ bungkus center content dengan stage (kalau belum)
+  const heroWrap = document.querySelector(".hero-wrap .container");
+  if(heroWrap && !document.querySelector(".stage")){
+    const stage = document.createElement("div");
+    stage.className = "stage";
+    while(heroWrap.firstChild){
+      stage.appendChild(heroWrap.firstChild);
+    }
+    heroWrap.appendChild(stage);
+  }
 }
 
 function renderTabs(){
@@ -208,7 +217,10 @@ function renderResultGrid(filter="all"){
       ${list.map(m=>`
         <div class="market-card">
           <div class="m-info" data-detail="${m.id}">i</div>
-          <div class="m-top"><img src="${escapeAttr(m.logo || "")}" alt="${escapeAttr(m.name)}" onerror="this.src='https://via.placeholder.com/240x120.png?text=LOGO'"></div>
+          <div class="m-top">
+            <img src="${escapeAttr(m.logo || "")}" alt="${escapeAttr(m.name)}"
+              onerror="this.src='https://via.placeholder.com/240x120.png?text=LOGO'">
+          </div>
           <div class="m-name">${escapeHtml(m.name)}</div>
           <div class="m-number">${escapeHtml(pad4(m.number))}</div>
           <div class="m-date">${escapeHtml(m.date || "")}</div>
@@ -223,54 +235,15 @@ function renderResultGrid(filter="all"){
   `;
 }
 
-function renderPrediksi(){
-  return `
-    <div class="card" style="padding:14px">
-      <b>Prediksi</b>
-      <div class="smallmuted" style="margin-top:6px">Konten prediksi bisa kamu isi dari Admin (teks/panduan).</div>
-      <div class="kv">
-        <div class="item"><b>Catatan</b><div class="smallmuted">Bisa diisi rules, link, info, dll.</div></div>
-        <div class="item"><b>Update</b><div class="mono">${new Date().toLocaleString("id-ID")}</div></div>
-      </div>
-    </div>
-  `;
-}
-function renderPaito(){
-  return `
-    <div class="card" style="padding:14px">
-      <b>Data</b>
-      <div class="smallmuted" style="margin-top:6px">Bagian data/rekap (netral).</div>
-      <div class="kv">
-        <div class="item"><b>Status</b><div class="mono">OK</div></div>
-        <div class="item"><b>Last Update</b><div class="mono">${new Date().toLocaleString("id-ID")}</div></div>
-      </div>
-    </div>
-  `;
-}
-function renderInfo(){
-  return `
-    <div class="card" style="padding:14px">
-      <b>Info</b>
-      <div class="smallmuted" style="margin-top:6px">Halaman info/panduan/FAQ (netral).</div>
-      <div class="kv">
-        <div class="item"><b>Kontak</b><div class="smallmuted">WA / Telegram / Livechat</div></div>
-        <div class="item"><b>Catatan</b><div class="smallmuted">Konten bisa kamu set dari Admin.</div></div>
-      </div>
-    </div>
-  `;
-}
-
 function refreshTab(){
   const tab = state.data.tabs.find(t=>t.key===state.currentTab) || {title:""};
   el("tabTitle").textContent = tab.title || "DATA";
 
-  const content = el("tabContent");
   const filter = el("marketSelect").value || "all";
+  const content = el("tabContent");
 
   if(state.currentTab === "result") content.innerHTML = renderResultGrid(filter);
-  else if(state.currentTab === "prediksi") content.innerHTML = renderPrediksi();
-  else if(state.currentTab === "paito") content.innerHTML = renderPaito();
-  else content.innerHTML = renderInfo();
+  else content.innerHTML = `<div class="card" style="padding:14px"><b>${escapeHtml(tab.title||"Info")}</b><div class="smallmuted" style="margin-top:6px">Konten bisa diisi dari Admin.</div></div>`;
 }
 
 function openModal(title, html){
@@ -278,11 +251,9 @@ function openModal(title, html){
   el("modalBody").innerHTML = html || "";
   el("modal").classList.add("show");
 }
-function closeModal(){
-  el("modal").classList.remove("show");
-}
+function closeModal(){ el("modal").classList.remove("show"); }
 
-function bindGlobalClicks(){
+function bindClicks(){
   document.addEventListener("click", (e)=>{
     const d = e.target.closest("[data-detail]");
     if(d){
@@ -322,19 +293,8 @@ function tickClock(){
   el("clockText").textContent = `${day}, ${date} (${time})`;
 }
 
-function escapeHtml(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function escapeAttr(s){
-  return escapeHtml(s).replaceAll("`","&#096;");
-}
-
 function mount(){
+  injectShade();
   renderTopLinks();
   renderNav();
   applySite();
@@ -345,10 +305,9 @@ function mount(){
   el("modalClose").addEventListener("click", closeModal);
   el("modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeModal(); });
 
-  bindGlobalClicks();
+  bindClicks();
 
   tickClock();
   setInterval(tickClock, 1000);
 }
-
 mount();
