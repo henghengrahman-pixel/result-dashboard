@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">ADMIN</div>
+    <div class="muted">Tanggal: <b><%= today %></b></div>
+    <form method="post" action="/admin/logout">
+      <button class="btn">Logout</button>
+    </form>
+  </div>
+
+  <div class="wrap">
+    <h3>Update Result (Hari ini)</h3>
+
+    <form class="form row" method="post" action="/admin/result">
+      <select name="market_id" required>
+        <% markets.forEach(m => { %>
+          <option value="<%= m.id %>"><%= m.name %></option>
+        <% }) %>
+      </select>
+
+      <input name="result_date" type="date" value="<%= today %>" required />
+      <input name="result_number" placeholder="contoh: 0498" required />
+      <button class="btn">Simpan</button>
+    </form>
+
+    <h3 style="margin-top:18px;">Result tersimpan (hari ini)</h3>
+    <div class="table">
+      <div class="trow thead">
+        <div>Market</div><div>Angka</div><div>Updated</div>
+      </div>
+      <% results.forEach(r => { %>
+        <div class="trow">
+          <div><b><%= r.name %></b> <span class="muted">(<%= r.slug %>)</span></div>
+          <div class="mono"><%= r.result_number %></div>
+          <div class="muted"><%= r.updated_at.toISOString ? r.updated_at.toISOString() : r.updated_at %></div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>
