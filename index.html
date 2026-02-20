@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Result</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="container topbar-wrap">
+      <div class="top-links" id="topLinks"></div>
+
+      <div class="top-right">
+        <a class="wa-pill" id="waBtn" href="#" target="_blank" rel="noopener">WHATSAPP</a>
+        <div class="clock-pill">
+          <span class="dot"></span>
+          <span id="clockText">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="container nav-wrap">
+      <a class="brand" href="#">
+        <img id="brandLogo" class="brand-logo" alt="Logo" />
+        <div class="brand-text">
+          <div class="brand-title" id="brandTitle">Rupiah Toto</div>
+          <div class="brand-sub" id="brandSub">Result • Data • Info</div>
+        </div>
+      </a>
+
+      <nav class="nav" id="navMenu"></nav>
+
+      <div class="nav-actions">
+        <a class="btn small" href="admin/admin.html">ADMIN</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO WRAP (mirip screenshot: side kiri/kanan + tengah konten) -->
+  <div class="hero-wrap" id="heroWrap">
+    <div class="container hero-grid">
+
+      <!-- SIDE LEFT -->
+      <div class="side side-left" id="sideLeft">
+        <div class="side-overlay"></div>
+      </div>
+
+      <!-- CENTER CONTENT -->
+      <main class="center">
+
+        <!-- marquee -->
+        <div class="marquee card">
+          <div class="marquee-track" id="marqueeTrack"></div>
+        </div>
+
+        <!-- main banner row -->
+        <div class="main-row">
+          <div class="main-banner card">
+            <div class="banner-img" id="mainBannerImg">
+              <div class="banner-actions">
+                <a class="btn small" href="#" id="btnLogin">Login</a>
+                <a class="btn small blue" href="#" id="btnPromo">Promo</a>
+                <a class="btn small" href="#" id="btnRtp">RTP / Data</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="right-banners card">
+            <a class="rb-item" href="#" id="rb1">
+              <img alt="Banner 1" />
+            </a>
+            <a class="rb-item" href="#" id="rb2">
+              <img alt="Banner 2" />
+            </a>
+            <a class="rb-item" href="#" id="rb3">
+              <img alt="Banner 3" />
+            </a>
+          </div>
+        </div>
+
+        <!-- tabs -->
+        <div class="tabs card">
+          <div class="tab-buttons" id="tabButtons"></div>
+
+          <div class="tab-toolbar">
+            <div class="tab-title" id="tabTitle">DATA RESULT</div>
+            <div class="tab-filter">
+              <select id="marketSelect" class="select">
+                <option value="all">Semua Pasaran</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="tabContent"></div>
+        </div>
+
+        <div class="footer" id="footerText">Copyright © 2026.</div>
+      </main>
+
+      <!-- SIDE RIGHT -->
+      <div class="side side-right" id="sideRight">
+        <div class="side-overlay"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <b id="modalTitle">Detail</b>
+        <button class="btn small secondary" id="modalClose">Tutup</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
