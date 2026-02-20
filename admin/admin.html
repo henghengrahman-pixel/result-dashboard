@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">🛠</div>
+      <div>
+        <div class="sb-title">Admin</div>
+        <div class="sb-sub">Dashboard Control</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <a href="#site" class="sb-link active" data-page="site">Web Settings</a>
+      <a href="#markets" class="sb-link" data-page="markets">Daftar Pasaran</a>
+      <a href="#results" class="sb-link" data-page="results">Result Pasaran</a>
+      <a href="#export" class="sb-link" data-page="export">Export / Import</a>
+    </nav>
+
+    <div class="sb-bottom">
+      <a class="btn" href="../index.html">Kembali ke Web</a>
+      <button class="btn secondary" id="resetBtn">Reset Default</button>
+      <button class="btn" id="saveBtn">Simpan Semua</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <button class="hamb" id="hamb">☰</button>
+      <div class="top-title" id="topTitle">Web Settings</div>
+      <div class="top-right">
+        <span class="pill">localStorage</span>
+      </div>
+    </div>
+
+    <!-- PAGE: SITE -->
+    <section class="page show" id="page-site">
+      <div class="card">
+        <h2>Web Settings</h2>
+        <p class="muted">Ubah logo, menu, topbar, marquee, banner, WA, background kiri/kanan, dll.</p>
+        <textarea id="siteJson" spellcheck="false"></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Tabs</h2>
+        <p class="muted">Ubah label & judul tab.</p>
+        <textarea id="tabsJson" spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <!-- PAGE: MARKETS -->
+    <section class="page" id="page-markets">
+      <div class="card">
+        <h2>Daftar Pasaran</h2>
+        <p class="muted">Tambah/hapus pasaran, ubah logo, angka, tanggal, link livedraw, jam tutup/result, deskripsi.</p>
+        <textarea id="marketsJson" spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <!-- PAGE: RESULTS -->
+    <section class="page" id="page-results">
+      <div class="card">
+        <h2>Result Pasaran</h2>
+        <p class="muted">List result cepat (opsional) kalau mau dipakai untuk riwayat/rekap.</p>
+        <textarea id="resultsJson" spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <!-- PAGE: EXPORT -->
+    <section class="page" id="page-export">
+      <div class="card">
+        <h2>Export / Import</h2>
+        <p class="muted">Copy data ini untuk pindah device/server. Kamu juga bisa paste untuk import.</p>
+        <textarea id="fullJson" spellcheck="false"></textarea>
+        <div class="row">
+          <button class="btn secondary" id="refreshBtn">Refresh Export</button>
+          <button class="btn" id="importBtn">Import</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot muted">Tips: setelah simpan, refresh halaman utama.</div>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>
