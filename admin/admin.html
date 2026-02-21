@@ -3,271 +3,273 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Panel</title>
+  <title>Admin Z-Panel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <aside class="sb">
-    <div class="sb-brand">
-      <div class="sb-logo">🐯</div>
-      <div>
-        <div class="sb-title">Welcome to Z-PANEL</div>
-        <div class="sb-sub">admin</div>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="hamb" id="hamb" aria-label="Menu">☰</button>
+    <div class="topbar-right">
+      <div class="avatar" title="admin"></div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🐯</div>
+      <div class="brand-text">
+        <div class="brand-title">Admin Z-Panel</div>
+        <div class="brand-sub">control panel</div>
       </div>
     </div>
 
-    <nav class="sb-nav">
-      <a class="sb-link active" data-page="dashboard" href="#dashboard">Dashboard</a>
-      <a class="sb-link" data-page="result" href="#result">Result Pasaran</a>
-      <a class="sb-link" data-page="pasaran" href="#pasaran">Daftar Pasaran</a>
-      <a class="sb-link" data-page="web" href="#web">Web Settings</a>
-      <a class="sb-link" data-page="banner" href="#banner">Banner / Slider</a>
-      <a class="sb-link" data-page="links" href="#links">Links</a>
+    <nav class="nav">
+      <a class="nav-item active" href="#dashboard" data-page="dashboard">
+        <span class="ico">▦</span> Dashboard
+      </a>
+      <a class="nav-item" href="#result" data-page="result">
+        <span class="ico">🧾</span> Result
+      </a>
+      <a class="nav-item" href="#pasaran" data-page="pasaran">
+        <span class="ico">🗂</span> Daftar Item
+      </a>
+      <a class="nav-item" href="#web" data-page="web">
+        <span class="ico">⚙</span> Web Settings
+      </a>
     </nav>
 
-    <div class="sb-bottom">
-      <a class="btn secondary" href="../index.html" target="_blank" rel="noopener">Open Web</a>
-      <button class="btn secondary" id="btnReset">Reset</button>
-      <button class="btn" id="btnSaveAll">Save All</button>
-      <button class="btn danger" id="btnLogout">Logout</button>
+    <div class="side-actions">
+      <a class="btn dark" href="../index.html" target="_blank" rel="noopener">Open Web</a>
+      <button class="btn danger" id="btnLogout" type="button">Logout</button>
     </div>
   </aside>
 
-  <main class="main">
-    <div class="topbar">
-      <button class="hamb" id="hamb">☰</button>
-      <div class="top-title" id="topTitle">Dashboard</div>
-      <div class="top-right">
-        <span class="pill" id="pillStatus">localStorage</span>
-      </div>
-    </div>
+  <!-- OVERLAY (mobile) -->
+  <div class="overlay" id="overlay"></div>
 
-    <!-- DASHBOARD -->
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- DASHBOARD (yang kamu minta mirip screenshot) -->
     <section class="page show" id="page-dashboard">
-      <div class="grid2">
+      <h1 class="page-title">Welcome to Z-PANEL admin</h1>
+
+      <div class="grid-2">
+        <!-- CHANGE PENGUMUMAN -->
         <div class="card">
-          <h2>CHANGE PENGUMUMAN WEB</h2>
-          <input id="stMarquee" placeholder="Teks pengumuman / marquee" />
-          <div class="row right">
-            <button class="btn small" data-save="marquee">Submit</button>
+          <div class="card-title">CHANGE PENGUMUMAN WEB</div>
+          <input id="stMarquee" class="input" placeholder="Tulis pengumuman..." />
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveMarquee">Submit</button>
           </div>
         </div>
 
+        <!-- CHANGE LOGO / BG / HEADER -->
         <div class="card">
-          <h2>CHANGE LOGO / BACKGROUND</h2>
+          <div class="card-title">CHANGE LOGO</div>
+          <input id="stLogo" class="input" placeholder="https://...logo.png" />
+          <div class="preview-row">
+            <img id="prevLogo" class="preview-img small" alt="">
+          </div>
 
-          <label>CHANGE LOGO (URL)</label>
-          <input id="stLogo" placeholder="https://..." />
+          <div class="card-title" style="margin-top:10px">CHANGE Background</div>
+          <input id="stBg" class="input" placeholder="https://...background.webp" />
+          <div class="preview-row">
+            <img id="prevBg" class="preview-img" alt="">
+          </div>
 
-          <label style="margin-top:10px">CHANGE Background LEFT (URL)</label>
-          <input id="stBgLeft" placeholder="https://..." />
+          <div class="card-title" style="margin-top:10px">CHANGE HEADER PROMOSI</div>
+          <input id="stHeaderPromo" class="input" placeholder="https://...header.webp" />
+          <div class="preview-row">
+            <img id="prevHeader" class="preview-img mini" alt="">
+          </div>
 
-          <label style="margin-top:10px">CHANGE Background RIGHT (URL)</label>
-          <input id="stBgRight" placeholder="https://..." />
-
-          <label style="margin-top:10px">CHANGE HEADER PROMOSI (Main Banner URL)</label>
-          <input id="stMainBanner" placeholder="https://..." />
-
-          <div class="row right">
-            <button class="btn small" data-save="branding">Submit</button>
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveBranding">Submit</button>
           </div>
         </div>
       </div>
 
-      <div class="grid2">
+      <div class="grid-2">
+        <!-- ADD SLIDER -->
         <div class="card">
-          <h2>CHANGE WHATSAPP</h2>
-          <input id="stWa" placeholder="contoh: https://wa.me/62xxxx" />
-          <div class="row right">
-            <button class="btn small" data-save="wa">Submit</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>CHANGE FOOTER WEB</h2>
-          <textarea id="stFooter" placeholder="Isi footer..."></textarea>
-          <div class="row right">
-            <button class="btn small" data-save="footer">Submit</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- RESULT PASARAN -->
-    <section class="page" id="page-result">
-      <div class="card">
-        <h2>Tambah Manual Result</h2>
-
-        <div class="form3">
-          <div>
-            <label>Pilih Pasaran</label>
-            <select id="rsMarket"></select>
-          </div>
-          <div>
-            <label>Angka</label>
-            <input id="rsNumber" placeholder="Masukkan angka result" />
-          </div>
-          <div>
-            <label>Tanggal</label>
-            <input id="rsDate" placeholder="contoh: 21 Feb 2026 | 01:00:04" />
-          </div>
-        </div>
-
-        <div class="row right">
-          <button class="btn" id="btnAddResult">Tambahkan Result</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="row between">
-          <h2>Semua Result</h2>
-          <div class="search">
-            <label>Search:</label>
-            <input id="rsSearch" placeholder="ketik nama pasaran..." />
-          </div>
-        </div>
-
-        <div class="table-wrap">
-          <table class="table" id="rsTable">
-            <thead>
-              <tr>
-                <th>Pasaran</th>
-                <th>Angka</th>
-                <th>Tanggal</th>
-                <th style="width:160px">Action</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- DAFTAR PASARAN -->
-    <section class="page" id="page-pasaran">
-      <div class="card">
-        <div class="row between">
-          <h2>Tambah Pasaran</h2>
-          <button class="btn" id="btnAddMarket">Add Pasaran</button>
-        </div>
-        <div class="muted">Isi lengkap: nama, link livedraw, link gambar, jam tutup/result, deskripsi.</div>
-      </div>
-
-      <div id="marketList"></div>
-    </section>
-
-    <!-- WEB SETTINGS (LINK TOPBAR + MENU) -->
-    <section class="page" id="page-web">
-      <div class="grid2">
-        <div class="card">
-          <h2>Top Links (atas)</h2>
-          <div id="topLinksList"></div>
-          <button class="btn small" id="btnAddTopLink">+ Add Link</button>
-        </div>
-
-        <div class="card">
-          <h2>Menu Navbar</h2>
-          <div id="navLinksList"></div>
-          <button class="btn small" id="btnAddNavLink">+ Add Menu</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- BANNER / SLIDER -->
-    <section class="page" id="page-banner">
-      <div class="grid2">
-        <div class="card">
-          <h2>ADD SLIDER WEB</h2>
-          <div class="form2">
-            <div>
-              <label>Link Gambar Slider</label>
-              <input id="slImg" placeholder="https://..." />
-            </div>
-            <div>
-              <label>Link Tujuan</label>
-              <input id="slUrl" placeholder="https://..." />
-            </div>
-          </div>
-          <div class="row right">
-            <button class="btn" id="btnAddSlider">Submit</button>
+          <div class="card-title">ADD SLIDER WEB</div>
+          <input id="slImg" class="input" placeholder="Link Slider (gambar)" />
+          <input id="slUrl" class="input" style="margin-top:8px" placeholder="Link Tujuan (opsional)" />
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnAddSlider">Submit</button>
           </div>
 
-          <h3>List of Slider</h3>
+          <div class="table-title">List of Banner Web</div>
           <div class="table-wrap">
             <table class="table" id="slTable">
-              <thead><tr><th>#</th><th>Gambar</th><th>Link</th><th style="width:160px">Action</th></tr></thead>
+              <thead>
+                <tr>
+                  <th style="width:40px">#</th>
+                  <th>Link Gambar Slider</th>
+                  <th style="width:220px">Gambar</th>
+                  <th style="width:180px">Action</th>
+                </tr>
+              </thead>
               <tbody></tbody>
             </table>
           </div>
         </div>
 
+        <!-- ADD BANNER BERANDA -->
         <div class="card">
-          <h2>ADD BANNER BERANDA WEB</h2>
-          <div class="form2">
-            <div>
-              <label>Link Gambar Banner</label>
-              <input id="bnImg" placeholder="https://..." />
-            </div>
-            <div>
-              <label>Link Tujuan</label>
-              <input id="bnUrl" placeholder="https://..." />
-            </div>
-          </div>
-          <div class="row right">
-            <button class="btn" id="btnAddBanner">Submit</button>
+          <div class="card-title">ADD BANNER BERANDA WEB</div>
+          <input id="bnImg" class="input" placeholder="Link Banner (gambar)" />
+          <input id="bnUrl" class="input" style="margin-top:8px" placeholder="Link Tujuan (opsional)" />
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnAddBanner">Submit</button>
           </div>
 
-          <h3>List of Banner</h3>
+          <div class="table-title">List of Banner Web</div>
           <div class="table-wrap">
             <table class="table" id="bnTable">
-              <thead><tr><th>#</th><th>Gambar</th><th>Link</th><th style="width:160px">Action</th></tr></thead>
+              <thead>
+                <tr>
+                  <th style="width:40px">#</th>
+                  <th>Link Gambar Banner</th>
+                  <th style="width:200px">Gambar</th>
+                  <th>Link Tujuan</th>
+                  <th style="width:180px">Action</th>
+                </tr>
+              </thead>
               <tbody></tbody>
             </table>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- LINKS (login/daftar/telegram/livechat dll) -->
-    <section class="page" id="page-links">
-      <div class="card">
-        <h2>CHANGE LINKS DAFTAR & LOGIN</h2>
-        <div class="muted">Ini buat tombol/tautan cepat di web.</div>
-
-        <div class="grid2">
-          <div>
-            <label>Link Login</label>
-            <input id="lkLogin" placeholder="https://..." />
-            <label style="margin-top:10px">Link Daftar</label>
-            <input id="lkDaftar" placeholder="https://..." />
-            <label style="margin-top:10px">Link Telegram</label>
-            <input id="lkTelegram" placeholder="https://..." />
-            <label style="margin-top:10px">Link Livechat</label>
-            <input id="lkLivechat" placeholder="https://..." />
-          </div>
-
-          <div>
-            <label>Link Promo</label>
-            <input id="lkPromo" placeholder="https://..." />
-            <label style="margin-top:10px">Link RTP/Data</label>
-            <input id="lkRtp" placeholder="https://..." />
-            <label style="margin-top:10px">Link Panduan</label>
-            <input id="lkPanduan" placeholder="https://..." />
+      <div class="grid-2">
+        <!-- CHANGE WHATSAPP -->
+        <div class="card">
+          <div class="card-title">CHANGE WHATSAPP</div>
+          <div class="help">Masukkan nomor lengkap dengan kode negara. Contoh: 628123456789</div>
+          <input id="stWa" class="input" placeholder="628xxxxxxxxxxx" />
+          <div class="help ok" id="waNow">NOMOR WA SAAT INI: -</div>
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveWa">Submit</button>
           </div>
         </div>
 
-        <div class="row right">
-          <button class="btn" id="btnSaveLinks">Submit</button>
+        <!-- CHANGE LINKS -->
+        <div class="card">
+          <div class="card-title">CHANGE LINKS DAFTAR & LOGIN</div>
+
+          <input id="lkTitle" class="input" placeholder="Judul / Brand (opsional)" />
+          <input id="lkDaftar" class="input" style="margin-top:8px" placeholder="Link Daftar" />
+          <input id="lkLogin" class="input" style="margin-top:8px" placeholder="Link Login" />
+          <input id="lkPanduan" class="input" style="margin-top:8px" placeholder="Link Panduan" />
+          <input id="lkRtp" class="input" style="margin-top:8px" placeholder="Link Data / RTP" />
+          <input id="lkPromo" class="input" style="margin-top:8px" placeholder="Link Promo" />
+          <input id="lkTelegram" class="input" style="margin-top:8px" placeholder="Link Telegram" />
+          <input id="lkLivechat" class="input" style="margin-top:8px" placeholder="Link Livechat" />
+
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveLinks">Submit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- FOOTER -->
+        <div class="card">
+          <div class="card-title">CHANGE FOOTER WEB</div>
+          <textarea id="stFooter" class="textarea" placeholder="Isi footer..."></textarea>
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveFooter">Submit</button>
+          </div>
+        </div>
+
+        <!-- INFO WEB DEPAN -->
+        <div class="card">
+          <div class="card-title">CHANGE INFO WEB DEPAN</div>
+          <textarea id="stInfo" class="textarea" placeholder="Isi info web depan..."></textarea>
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveInfo">Submit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-1">
+        <!-- CONTACT INFO -->
+        <div class="card">
+          <div class="card-title">CHANGE CONTACT INFORMATION</div>
+          <textarea id="stContact" class="textarea" placeholder="Isi kontak..."></textarea>
+          <div class="actions right">
+            <button class="btn primary" type="button" id="btnSaveContact">Submit</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="muted center small" style="margin:12px 0">Tip: setelah Save, refresh halaman utama.</div>
+    <!-- PAGE RESULT (placeholder) -->
+    <section class="page" id="page-result">
+      <h1 class="page-title">Result</h1>
+      <div class="card">
+        <div class="help">Halaman ini bisa kamu isi form input result + tabel edit/hapus (pakai JS yang kemarin).</div>
+      </div>
+    </section>
+
+    <!-- PAGE PASARAN (placeholder) -->
+    <section class="page" id="page-pasaran">
+      <h1 class="page-title">Daftar Item</h1>
+      <div class="card">
+        <div class="help">Halaman ini untuk tambah item/logo/link/jam (pakai JS yang kemarin).</div>
+      </div>
+    </section>
+
+    <!-- PAGE WEB -->
+    <section class="page" id="page-web">
+      <h1 class="page-title">Web Settings</h1>
+      <div class="card">
+        <div class="help">Kalau mau, kita pisah setting navbar/topbar ke sini.</div>
+      </div>
+    </section>
+
   </main>
 
   <script src="admin.js"></script>
+
+  <!-- UI routing + mobile sidebar (tanpa ganggu admin.js data kamu) -->
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const hamb = document.getElementById("hamb");
+
+    function openSide(){ sidebar.classList.add("open"); overlay.classList.add("show"); }
+    function closeSide(){ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+
+    hamb?.addEventListener("click", ()=> {
+      if(sidebar.classList.contains("open")) closeSide();
+      else openSide();
+    });
+    overlay?.addEventListener("click", closeSide);
+
+    function setPage(name){
+      document.querySelectorAll(".page").forEach(p=>p.classList.remove("show"));
+      document.getElementById("page-"+name)?.classList.add("show");
+      document.querySelectorAll(".nav-item").forEach(a=>{
+        a.classList.toggle("active", a.dataset.page===name);
+      });
+      closeSide();
+    }
+
+    function onHash(){
+      const name = (location.hash||"#dashboard").replace("#","");
+      setPage(name);
+    }
+    window.addEventListener("hashchange", onHash);
+    onHash();
+  </script>
 </body>
 </html>
