@@ -224,7 +224,7 @@ img.src = bust(item.img || "");
     track.innerHTML = unit + unit + unit + unit;
   }
 
-  // stage wrap (bungkus hanya .center, jangan ganggu .hero-grid)
+ // stage wrap (bungkus hanya .center, jangan ganggu .hero-grid)
 const center = document.querySelector(".hero-grid .center");
 if(center && !center.querySelector(":scope > .stage")){
   const stage = document.createElement("div");
@@ -233,6 +233,12 @@ if(center && !center.querySelector(":scope > .stage")){
     stage.appendChild(center.firstChild);
   }
   center.appendChild(stage);
+}
+
+} // ✅ INI wajib: nutup applySite()
+
+function renderTabs(){
+  ...
 }
 
 function renderTabs(){
