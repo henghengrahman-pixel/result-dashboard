@@ -187,8 +187,9 @@ function applySite(){
   // main banner
   const mb = el("mainBannerImg");
   if(mb){
-    mb.style.backgroundImage =
-      `linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)), url("${mainBanner || ""}")`;
+const bust = (url) => url ? `${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}` : "";
+mb.style.backgroundImage =
+  `linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)), url("${bust(mainBanner || "")}")`;
   }
 
   // buttons
@@ -209,7 +210,8 @@ function applySite(){
     const item = rightBanners[idx] || {img:"https://via.placeholder.com/800x220.png?text=BANNER", url:"#"};
     a.href = item.url || "#";
     if(img){
-      img.src = item.img || "";
+     const bust = (url) => url ? `${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}` : "";
+img.src = bust(item.img || "");
       img.onerror = ()=>{ img.src = "https://via.placeholder.com/800x220.png?text=BANNER"; };
     }
   });
@@ -222,16 +224,15 @@ function applySite(){
     track.innerHTML = unit + unit + unit + unit;
   }
 
-  // stage wrap
-  const heroWrap = document.querySelector(".hero-wrap .container");
-  if(heroWrap && !document.querySelector(".stage")){
-    const stage = document.createElement("div");
-    stage.className = "stage";
-    while(heroWrap.firstChild){
-      stage.appendChild(heroWrap.firstChild);
-    }
-    heroWrap.appendChild(stage);
+  // stage wrap (bungkus hanya .center, jangan ganggu .hero-grid)
+const center = document.querySelector(".hero-grid .center");
+if(center && !center.querySelector(":scope > .stage")){
+  const stage = document.createElement("div");
+  stage.className = "stage";
+  while(center.firstChild){
+    stage.appendChild(center.firstChild);
   }
+  center.appendChild(stage);
 }
 
 function renderTabs(){
@@ -264,7 +265,7 @@ function renderMarketSelect(){
     sel.appendChild(opt);
   });
 
-  sel.addEventListener("change", refreshTab);
+  sel.onchange = refreshTab;
 }
 
 function renderResultGrid(filter="all"){
