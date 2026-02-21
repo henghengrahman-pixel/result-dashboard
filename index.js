@@ -17,11 +17,11 @@ const defaultData = {
     ],
     navMenu: [
       {label:"HOME", url:"#", active:true},
-      {label:"LIVE DRAW", url:"#"},
-      {label:"PREDIKSI", url:"#", pill:{text:"HOT", type:"hot"}},
+      {label:"LIVE DATA", url:"#"},
+      {label:"ARTIKEL", url:"#"},
       {label:"TOOLS", url:"#", pill:{text:"HOT", type:"hot"}},
       {label:"DATA RESULT", url:"#", pill:{text:"NEW", type:"new"}},
-      {label:"PROMOSI", url:"#", pill:{text:"HOT", type:"hot"}},
+      {label:"PROMO", url:"#", pill:{text:"HOT", type:"hot"}},
       {label:"PANDUAN", url:"#"}
     ],
     hero: {
@@ -35,7 +35,11 @@ const defaultData = {
         {img:"https://via.placeholder.com/800x220.png?text=FREEBET", url:"#"},
         {img:"https://via.placeholder.com/800x220.png?text=TURNOVER", url:"#"},
         {img:"https://via.placeholder.com/800x220.png?text=MAHJONG", url:"#"}
-      ]
+      ],
+      // schema admin (fallback)
+      backgroundUrl: "",
+      sliders: [],
+      homeBanners: []
     }
   },
   tabs: [
@@ -61,7 +65,28 @@ function normalize(d){
   data.site.topLinks = Array.isArray(data.site.topLinks) ? data.site.topLinks : [];
   data.site.navMenu = Array.isArray(data.site.navMenu) ? data.site.navMenu : [];
   data.site.hero = data.site.hero && typeof data.site.hero === "object" ? data.site.hero : deepClone(defaultData.site.hero);
-  data.site.hero.rightBanners = Array.isArray(data.site.hero.rightBanners) ? data.site.hero.rightBanners : [];
+
+  const hero = data.site.hero;
+  hero.rightBanners = Array.isArray(hero.rightBanners) ? hero.rightBanners : [];
+  hero.sliders = Array.isArray(hero.sliders) ? hero.sliders : [];
+  hero.homeBanners = Array.isArray(hero.homeBanners) ? hero.homeBanners : [];
+
+  // fallback schema admin -> schema frontend
+  const bgFallback = hero.backgroundUrl || "";
+
+  if(!hero.sideLeftBg && bgFallback) hero.sideLeftBg = bgFallback;
+  if(!hero.sideRightBg && bgFallback) hero.sideRightBg = bgFallback;
+
+  if(!hero.mainBannerBg){
+    const firstSlider = hero.sliders[0]?.img;
+    if(firstSlider) hero.mainBannerBg = firstSlider;
+    else if(bgFallback) hero.mainBannerBg = bgFallback;
+  }
+
+  if(hero.rightBanners.length === 0 && hero.homeBanners.length){
+    hero.rightBanners = hero.homeBanners.slice(0,3).map(x=>({ img:x.img, url:x.url }));
+  }
+
   data.tabs = Array.isArray(data.tabs) ? data.tabs : deepClone(defaultData.tabs);
   data.markets = Array.isArray(data.markets) ? data.markets : [];
   data.results = Array.isArray(data.results) ? data.results : [];
@@ -102,73 +127,102 @@ function injectShade(){
 
 function renderTopLinks(){
   const wrap = el("topLinks");
+  if(!wrap) return;
   const links = state.data.site.topLinks || [];
   wrap.innerHTML = links.map((x, i)=>`
-    <a href="${x.url || "#"}">${escapeHtml(x.label || "")}</a>
+    <a href="${escapeAttr(x.url || "#")}">${escapeHtml(x.label || "")}</a>
     ${i < links.length-1 ? `<span class="sep">|</span>` : ""}
   `).join("");
 }
 
 function renderNav(){
   const nav = el("navMenu");
+  if(!nav) return;
   const items = state.data.site.navMenu || [];
   nav.innerHTML = items.map(it=>{
     const pill = it.pill?.text ? `<span class="pill ${it.pill.type==="new"?"new":"hot"}">${escapeHtml(it.pill.text)}</span>` : "";
-    return `<a href="${it.url || "#"}" class="${it.active ? "active":""}">${escapeHtml(it.label || "")}${pill}</a>`;
+    return `<a href="${escapeAttr(it.url || "#")}" class="${it.active ? "active":""}">${escapeHtml(it.label || "")}${pill}</a>`;
   }).join("");
 }
 
 function applySite(){
-  const s = state.data.site;
+  const s = state.data.site || {};
+  const hero = s.hero || {};
 
-  el("brandTitle").textContent = s.brandTitle || "Dashboard";
-  el("brandSub").textContent = s.brandSub || "";
-  el("footerText").textContent = s.footerText || "";
+  if(el("brandTitle")) el("brandTitle").textContent = s.brandTitle || "Dashboard";
+  if(el("brandSub")) el("brandSub").textContent = s.brandSub || "";
+  if(el("footerText")) el("footerText").textContent = s.footerText || "";
 
   const logo = el("brandLogo");
-  logo.src = s.brandLogoUrl || "";
-  logo.onerror = ()=>{ logo.src = "https://via.placeholder.com/80x80.png?text=LOGO"; };
+  if(logo){
+    logo.src = s.brandLogoUrl || "";
+    logo.onerror = ()=>{ logo.src = "https://via.placeholder.com/80x80.png?text=LOGO"; };
+  }
 
   const wa = el("waBtn");
-  wa.textContent = s.whatsappText || "WHATSAPP";
-  wa.href = s.whatsappUrl || "#";
+  if(wa){
+    wa.textContent = s.whatsappText || "WHATSAPP";
+    wa.href = s.whatsappUrl || "#";
+  }
 
-  // ✅ SET SIDE BG PAKAI CSS VAR (ini yang bikin mirip)
+  // fallback admin fields
+  const bgFallback = hero.backgroundUrl || "";
+  const sliders = Array.isArray(hero.sliders) ? hero.sliders : [];
+  const homeBanners = Array.isArray(hero.homeBanners) ? hero.homeBanners : [];
+
+  const sideLeft = hero.sideLeftBg || bgFallback;
+  const sideRight = hero.sideRightBg || bgFallback;
+
+  const mainBanner = hero.mainBannerBg || sliders[0]?.img || bgFallback;
+
+  const rightBanners = (Array.isArray(hero.rightBanners) && hero.rightBanners.length)
+    ? hero.rightBanners
+    : homeBanners.slice(0,3).map(x => ({ img:x.img, url:x.url }));
+
+  // set side BG via CSS var
   const root = document.documentElement;
-  root.style.setProperty("--side-left-url", `url("${s.hero?.sideLeftBg || ""}")`);
-  root.style.setProperty("--side-right-url", `url("${s.hero?.sideRightBg || ""}")`);
+  root.style.setProperty("--side-left-url", `url("${sideLeft || ""}")`);
+  root.style.setProperty("--side-right-url", `url("${sideRight || ""}")`);
 
   // main banner
-  el("mainBannerImg").style.backgroundImage =
-    `linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)), url("${s.hero?.mainBannerBg || ""}")`;
+  const mb = el("mainBannerImg");
+  if(mb){
+    mb.style.backgroundImage =
+      `linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72)), url("${mainBanner || ""}")`;
+  }
 
   // buttons
-  el("btnLogin").textContent = s.hero?.btnLogin?.label || "Login";
-  el("btnPromo").textContent = s.hero?.btnPromo?.label || "Promo";
-  el("btnRtp").textContent = s.hero?.btnRtp?.label || "RTP / Data";
-  el("btnLogin").href = s.hero?.btnLogin?.url || "#";
-  el("btnPromo").href = s.hero?.btnPromo?.url || "#";
-  el("btnRtp").href = s.hero?.btnRtp?.url || "#";
+  const bl = el("btnLogin");
+  const bp = el("btnPromo");
+  const br = el("btnRtp");
 
-  // right banners
-  const rbs = s.hero?.rightBanners || [];
+  if(bl){ bl.textContent = hero?.btnLogin?.label || "Login"; bl.href = hero?.btnLogin?.url || "#"; }
+  if(bp){ bp.textContent = hero?.btnPromo?.label || "Promo"; bp.href = hero?.btnPromo?.url || "#"; }
+  if(br){ br.textContent = hero?.btnRtp?.label || "RTP / Data"; br.href = hero?.btnRtp?.url || "#"; }
+
+  // right banners 3 slot
   const ids = ["rb1","rb2","rb3"];
   ids.forEach((id, idx)=>{
     const a = el(id);
+    if(!a) return;
     const img = a.querySelector("img");
-    const item = rbs[idx] || {img:"https://via.placeholder.com/800x220.png?text=BANNER", url:"#"};
+    const item = rightBanners[idx] || {img:"https://via.placeholder.com/800x220.png?text=BANNER", url:"#"};
     a.href = item.url || "#";
-    img.src = item.img || "";
-    img.onerror = ()=>{ img.src = "https://via.placeholder.com/800x220.png?text=BANNER"; };
+    if(img){
+      img.src = item.img || "";
+      img.onerror = ()=>{ img.src = "https://via.placeholder.com/800x220.png?text=BANNER"; };
+    }
   });
 
   // marquee
   const txt = s.marqueeText || "";
   const track = el("marqueeTrack");
-  const unit = `<span>${escapeHtml(txt)}</span>`;
-  track.innerHTML = unit + unit + unit + unit;
+  if(track){
+    const unit = `<span>${escapeHtml(txt)}</span>`;
+    track.innerHTML = unit + unit + unit + unit;
+  }
 
-  // ✅ bungkus center content dengan stage (kalau belum)
+  // stage wrap
   const heroWrap = document.querySelector(".hero-wrap .container");
   if(heroWrap && !document.querySelector(".stage")){
     const stage = document.createElement("div");
@@ -182,8 +236,9 @@ function applySite(){
 
 function renderTabs(){
   const wrap = el("tabButtons");
+  if(!wrap) return;
   wrap.innerHTML = (state.data.tabs || []).map(t=>`
-    <button class="tab-btn ${t.key===state.currentTab ? "active":""}" data-tab="${t.key}">
+    <button class="tab-btn ${t.key===state.currentTab ? "active":""}" data-tab="${escapeAttr(t.key)}">
       ${escapeHtml(t.label || t.key)}
     </button>
   `).join("");
@@ -199,6 +254,8 @@ function renderTabs(){
 
 function renderMarketSelect(){
   const sel = el("marketSelect");
+  if(!sel) return;
+
   sel.innerHTML = `<option value="all">Semua Pasaran</option>`;
   state.data.markets.forEach(m=>{
     const opt = document.createElement("option");
@@ -206,6 +263,7 @@ function renderMarketSelect(){
     opt.textContent = m.name;
     sel.appendChild(opt);
   });
+
   sel.addEventListener("change", refreshTab);
 }
 
@@ -216,7 +274,7 @@ function renderResultGrid(filter="all"){
     <div class="cards">
       ${list.map(m=>`
         <div class="market-card">
-          <div class="m-info" data-detail="${m.id}">i</div>
+          <div class="m-info" data-detail="${escapeAttr(m.id)}">i</div>
           <div class="m-top">
             <img src="${escapeAttr(m.logo || "")}" alt="${escapeAttr(m.name)}"
               onerror="this.src='https://via.placeholder.com/240x120.png?text=LOGO'">
@@ -225,7 +283,7 @@ function renderResultGrid(filter="all"){
           <div class="m-number">${escapeHtml(pad4(m.number))}</div>
           <div class="m-date">${escapeHtml(m.date || "")}</div>
           <div class="m-actions">
-            <a class="m-btn" href="${escapeAttr(m.liveUrl || "#")}" target="_blank" rel="noopener">LIVEDRAW</a>
+            <a class="m-btn" href="${escapeAttr(m.liveUrl || "#")}" target="_blank" rel="noopener">LIVEDATA</a>
             <a class="m-btn" href="${escapeAttr(m.detailUrl || "#")}" target="_blank" rel="noopener">DETAIL</a>
             <a class="m-btn" href="${escapeAttr(m.historyUrl || "#")}" target="_blank" rel="noopener">RESULT</a>
           </div>
@@ -237,51 +295,52 @@ function renderResultGrid(filter="all"){
 
 function refreshTab(){
   const tab = state.data.tabs.find(t=>t.key===state.currentTab) || {title:""};
-  el("tabTitle").textContent = tab.title || "DATA";
+  if(el("tabTitle")) el("tabTitle").textContent = tab.title || "DATA";
 
-  const filter = el("marketSelect").value || "all";
+  const filter = el("marketSelect")?.value || "all";
   const content = el("tabContent");
+  if(!content) return;
 
   if(state.currentTab === "result") content.innerHTML = renderResultGrid(filter);
   else content.innerHTML = `<div class="card" style="padding:14px"><b>${escapeHtml(tab.title||"Info")}</b><div class="smallmuted" style="margin-top:6px">Konten bisa diisi dari Admin.</div></div>`;
 }
 
 function openModal(title, html){
-  el("modalTitle").textContent = title || "Detail";
-  el("modalBody").innerHTML = html || "";
-  el("modal").classList.add("show");
+  if(el("modalTitle")) el("modalTitle").textContent = title || "Detail";
+  if(el("modalBody")) el("modalBody").innerHTML = html || "";
+  el("modal")?.classList.add("show");
 }
-function closeModal(){ el("modal").classList.remove("show"); }
+function closeModal(){ el("modal")?.classList.remove("show"); }
 
 function bindClicks(){
   document.addEventListener("click", (e)=>{
     const d = e.target.closest("[data-detail]");
-    if(d){
-      const id = d.getAttribute("data-detail");
-      const m = state.data.markets.find(x=>x.id===id);
-      if(!m) return;
+    if(!d) return;
 
-      openModal(m.name, `
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-          <img src="${escapeAttr(m.logo || "")}" alt="${escapeAttr(m.name)}"
-            style="width:170px;height:auto;border-radius:14px;border:1px solid rgba(255,255,255,.12)"
-            onerror="this.src='https://via.placeholder.com/240x120.png?text=LOGO'">
-          <div>
-            <div style="font-weight:900;font-size:18px">${escapeHtml(m.name)}</div>
-            <div class="smallmuted" style="margin-top:6px">${escapeHtml(m.date || "")}</div>
-            <div class="mono" style="margin-top:10px">Angka: ${escapeHtml(pad4(m.number))}</div>
-          </div>
+    const id = d.getAttribute("data-detail");
+    const m = state.data.markets.find(x=>x.id===id);
+    if(!m) return;
+
+    openModal(m.name, `
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <img src="${escapeAttr(m.logo || "")}" alt="${escapeAttr(m.name)}"
+          style="width:170px;height:auto;border-radius:14px;border:1px solid rgba(255,255,255,.12)"
+          onerror="this.src='https://via.placeholder.com/240x120.png?text=LOGO'">
+        <div>
+          <div style="font-weight:900;font-size:18px">${escapeHtml(m.name)}</div>
+          <div class="smallmuted" style="margin-top:6px">${escapeHtml(m.date || "")}</div>
+          <div class="mono" style="margin-top:10px">Angka: ${escapeHtml(pad4(m.number))}</div>
         </div>
-        <div class="kv">
-          <div class="item"><b>Tutup Pasaran</b><div class="mono">${escapeHtml(m.closeTime || "-")}</div></div>
-          <div class="item"><b>Result</b><div class="mono">${escapeHtml(m.resultTime || "-")}</div></div>
-        </div>
-        <div class="item" style="margin-top:12px;border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04)">
-          <b>Deskripsi</b>
-          <div class="smallmuted" style="margin-top:6px">${escapeHtml(m.desc || "-")}</div>
-        </div>
-      `);
-    }
+      </div>
+      <div class="kv">
+        <div class="item"><b>Tutup</b><div class="mono">${escapeHtml(m.closeTime || "-")}</div></div>
+        <div class="item"><b>Jadwal</b><div class="mono">${escapeHtml(m.resultTime || "-")}</div></div>
+      </div>
+      <div class="item" style="margin-top:12px;border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04)">
+        <b>Deskripsi</b>
+        <div class="smallmuted" style="margin-top:6px">${escapeHtml(m.desc || "-")}</div>
+      </div>
+    `);
   });
 }
 
@@ -290,24 +349,42 @@ function tickClock(){
   const day = now.toLocaleDateString("id-ID", {weekday:"long"});
   const date = now.toLocaleDateString("id-ID", {day:"2-digit", month:"short", year:"numeric"});
   const time = now.toLocaleTimeString("id-ID");
-  el("clockText").textContent = `${day}, ${date} (${time})`;
+  if(el("clockText")) el("clockText").textContent = `${day}, ${date} (${time})`;
 }
 
-function mount(){
-  injectShade();
+function reloadAndRender(){
+  state.data = loadData();
   renderTopLinks();
   renderNav();
   applySite();
   renderTabs();
   renderMarketSelect();
   refreshTab();
+}
 
-  el("modalClose").addEventListener("click", closeModal);
-  el("modal").addEventListener("click",(e)=>{ if(e.target.id==="modal") closeModal(); });
+function mount(){
+  injectShade();
+  reloadAndRender();
+
+  el("modalClose")?.addEventListener("click", closeModal);
+  el("modal")?.addEventListener("click",(e)=>{ if(e.target.id==="modal") closeModal(); });
 
   bindClicks();
 
   tickClock();
   setInterval(tickClock, 1000);
 }
+
+// auto update saat admin ubah data (tab lain)
+window.addEventListener("storage", (e)=>{
+  if(e.key === STORAGE_KEY){
+    reloadAndRender();
+  }
+});
+
+// kadang user balik ke tab ini tanpa trigger storage
+document.addEventListener("visibilitychange", ()=>{
+  if(!document.hidden) reloadAndRender();
+});
+
 mount();
